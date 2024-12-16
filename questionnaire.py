@@ -18,6 +18,7 @@
 #
 #    - lancer()
 #
+import json
 
 class Question:
     def __init__(self, titre, choix, bonne_reponse):
@@ -25,9 +26,12 @@ class Question:
         self.choix = choix
         self.bonne_reponse = bonne_reponse
 
-    def FromData(data):
-        # ....
-        q = Question(data[2], data[0], data[1])
+    def FromJsonData(data):
+        choix = [i[0] for i in data["choix"] ]
+        bonne_reponse = [i[0] for i in data["choix"] if i[1]]
+        if len(bonne_reponse) != 1:
+            return None
+        q = Question(data["titre"], choix, bonne_reponse[0])
         return q
 
     def poser(self):
@@ -88,12 +92,26 @@ lancer_questionnaire(questionnaire)"""
 # q = Question.FromData(data)
 # print(q.__dict__)
 
-Questionnaire(
+""" Questionnaire(
     (
     Question("Quelle est la capitale de la France ?", ("Marseille", "Nice", "Paris", "Nantes", "Lille"), "Paris"), 
     Question("Quelle est la capitale de l'Italie ?", ("Rome", "Venise", "Pise", "Florence"), "Rome"),
     Question("Quelle est la capitale de la Belgique ?", ("Anvers", "Bruxelles", "Bruges", "Liège"), "Bruxelles")
     )
-).lancer()
+).lancer() """
+
+#Charger un fichier JSON
+
+filename = "animaux_leschats_confirme.json"
+file = open(filename, "r")
+json_data = file.read()
+file.close()
+questionnaire_data= json.loads(json_data)
+
+questionnaire_data_questions = questionnaire_data["questions"]
+q = Question.FromJsonData(questionnaire_data_questions[0])
+q.poser()
+print()
+
 
 
